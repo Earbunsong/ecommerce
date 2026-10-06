@@ -295,15 +295,44 @@ export const seedProducts: SeedProduct[] = [
   },
 ]
 
-/** Simple placeholder image: product name on a coloured background. */
-export function placeholderSvg(name: string, color: string): string {
-  const [r = 0, g = 0, b = 0] = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16))
+const VIEWS = ['Front', 'Side', 'Detail'] as const
+
+export type SeedImage = { file: string; view: string; color: string }
+
+/**
+ * 1–3 images per product, chosen by position so every run produces the same seed.
+ * The first image is the primary one; the others use a darker or lighter shade.
+ */
+export function seedImages(product: SeedProduct, index: number): SeedImage[] {
+  const count = (index % 3) + 1
+  return VIEWS.slice(0, count).map((view, i) => ({
+    file: `${product.slug}-${i + 1}.svg`,
+    view,
+    color: i === 0 ? product.color : shade(product.color, i === 1 ? -0.25 : 0.35),
+  }))
+}
+
+const rgb = (color: string) => [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16))
+
+/** amount < 0 mixes towards black, > 0 towards white. */
+function shade(color: string, amount: number): string {
+  const target = amount < 0 ? 0 : 255
+  return `#${rgb(color)
+    .map((c) => Math.round(c + (target - c) * Math.abs(amount)))
+    .map((c) => c.toString(16).padStart(2, '0'))
+    .join('')}`
+}
+
+/** Simple placeholder image: product name and view label on a coloured background. */
+export function placeholderSvg(name: string, color: string, view: string): string {
+  const [r = 0, g = 0, b = 0] = rgb(color)
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
   const text = luminance < 0.6 ? '#ffffff' : '#111827'
   const label = name.replace(/&/g, '&amp;').replace(/</g, '&lt;')
   return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
   <rect width="800" height="800" fill="${color}"/>
-  <text x="400" y="400" font-family="system-ui, sans-serif" font-size="44" font-weight="600" fill="${text}" text-anchor="middle" dominant-baseline="middle">${label}</text>
+  <text x="400" y="380" font-family="system-ui, sans-serif" font-size="44" font-weight="600" fill="${text}" text-anchor="middle" dominant-baseline="middle">${label}</text>
+  <text x="400" y="440" font-family="system-ui, sans-serif" font-size="28" fill="${text}" opacity="0.8" text-anchor="middle" dominant-baseline="middle">${view}</text>
   <text x="400" y="760" font-family="system-ui, sans-serif" font-size="24" fill="${text}" opacity="0.6" text-anchor="middle">ShopKH demo</text>
 </svg>
 `

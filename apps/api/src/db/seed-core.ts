@@ -14,7 +14,7 @@ import {
   products,
   users,
 } from './schema.js'
-import { demoUsers, seedCategories, seedProducts } from './seed-data.js'
+import { demoUsers, seedCategories, seedImages, seedProducts } from './seed-data.js'
 
 const MINUTE = 60_000
 const DAY = 24 * 60 * MINUTE
@@ -93,7 +93,7 @@ export async function seedDatabase(db: Db) {
       categoryIds.set(c.slug, row!.id)
     }
 
-    // ---------- Products and primary images ----------
+    // ---------- Products and images (1–3 each, the first one primary) ----------
     const productRows = await tx
       .insert(products)
       .values(
@@ -111,13 +111,15 @@ export async function seedDatabase(db: Db) {
       .returning()
 
     await tx.insert(productImages).values(
-      productRows.map((p) => ({
-        productId: p.id,
-        url: `/uploads/seed/${p.slug}.svg`,
-        altText: p.name,
-        sortOrder: 0,
-        isPrimary: true,
-      })),
+      seedProducts.flatMap((p, index) =>
+        seedImages(p, index).map((image, i) => ({
+          productId: productRows.find((row) => row.slug === p.slug)!.id,
+          url: `/uploads/seed/${image.file}`,
+          altText: `${p.name} – ${image.view}`,
+          sortOrder: i,
+          isPrimary: i === 0,
+        })),
+      ),
     )
 
     const product = (slug: string) => productRows.find((p) => p.slug === slug)!

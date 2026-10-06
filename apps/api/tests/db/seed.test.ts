@@ -4,7 +4,7 @@ import { count, eq } from 'drizzle-orm'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { db } from '../../src/db/client.js'
 import { seedDatabase } from '../../src/db/seed-core.js'
-import { orders, products, users } from '../../src/db/schema.js'
+import { orders, productImages, products, users } from '../../src/db/schema.js'
 import { verifyPassword } from '../../src/lib/password.js'
 import { resetDb } from '../setup/db.js'
 
@@ -29,6 +29,20 @@ describe('demo seed', () => {
     expect(rows.filter((p) => !p.isActive)).toHaveLength(1)
     expect(rows.filter((p) => p.stockQuantity === 0)).toHaveLength(1)
     expect(rows.filter((p) => p.stockQuantity > 0 && p.stockQuantity <= 5)).toHaveLength(2)
+  })
+
+  it('gives every product 1–3 images in order, exactly one of them primary', async () => {
+    const images = await db.select().from(productImages)
+    const byProduct = Map.groupBy(images, (img) => img.productId)
+
+    expect(byProduct.size).toBe(30)
+    for (const productImgs of byProduct.values()) {
+      expect(productImgs.length).toBeGreaterThanOrEqual(1)
+      expect(productImgs.length).toBeLessThanOrEqual(3)
+      expect(productImgs.filter((img) => img.isPrimary)).toHaveLength(1)
+      expect(productImgs.find((img) => img.isPrimary)!.sortOrder).toBe(0)
+    }
+    expect(images).toHaveLength(60) // (i % 3) + 1 over 30 products
   })
 
   it('creates a delivered order and a cancelled paid order that needs a refund', async () => {
