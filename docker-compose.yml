@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: shopkh-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: shopkh
+      POSTGRES_PASSWORD: shopkh
+      POSTGRES_DB: shopkh
+    ports:
+      # Host port 5433: 5432 is used by the Windows PostgreSQL services on this machine
+      - '5433:5432'
+    volumes:
+      - shopkh-pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U shopkh -d shopkh']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  shopkh-pgdata:
