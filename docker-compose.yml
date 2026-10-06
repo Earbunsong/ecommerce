@@ -8,8 +8,8 @@ services:
       POSTGRES_PASSWORD: shopkh
       POSTGRES_DB: shopkh
     ports:
-      # Host port 5433: 5432 is used by the Windows PostgreSQL services on this machine
-      - '5433:5432'
+      # Host port 5434: 5432 and 5433 are used by the Windows PostgreSQL services on this machine
+      - '5434:5432'
     volumes:
       - shopkh-pgdata:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

@@ -23,8 +23,10 @@ If code and docs disagree, stop and ask which one is correct. If you change a de
 
 - Node 22 (`.nvmrc`; `nvm use 22`). TypeScript is pinned to 6.0.x because typescript-eslint does not support 7 yet
 - `pnpm dev` — run API (:3000) and web (:5173; Vite moves to the next free port if 5173 is taken)
-- `docker compose up -d` — start PostgreSQL 16 on host port **5433** (`shopkh` and `shopkh_test`)
-- `pnpm --filter api db:generate` / `db:migrate` / `db:seed` (dev only, never production) / `db:create-admin` (production admin from `ADMIN_EMAIL`, `ADMIN_PASSWORD`)
+- `docker compose up -d` — start PostgreSQL 16 on host port **5434** (`shopkh` and `shopkh_test`)
+- `pnpm db:migrate && pnpm db:seed` — set up the dev database (from the repo root)
+- `pnpm --filter api db:generate` / `db:migrate` / `db:seed` (dev only, never production; resets all data) / `db:create-admin` (production admin from `ADMIN_EMAIL`, `ADMIN_PASSWORD`)
+- Demo logins after `db:seed`: `admin@shopkh.test` / `Admin123!`, `dara@shopkh.test` and `sophea@shopkh.test` / `Customer123!`
 - `pnpm test` — all tests against the `shopkh_test` database; `pnpm --filter api test` — API only
 - Concurrency tests must use real separate connections (`Promise.all` through the API), never one shared transaction
 - `pnpm lint` and `pnpm typecheck` must pass before a phase is done

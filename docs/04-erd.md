@@ -223,7 +223,7 @@ This counts online orders once paid and COD orders once delivered (when their pa
 | `order_items.product_name`, `unit_price_cents` snapshot | Past orders do not change when products are edited. |
 | `orders.ship_*` snapshot (separate street, district, province; not FK to address) | If the customer edits or deletes an address, the order still shows where it was shipped. Separate fields allow filtering and reporting by province. |
 | `orders.needs_refund` set in the same transaction as the cancel (or by the payment callback) | Refunds are done outside the system (out of scope), but the admin must never miss a paid order that was cancelled. |
-| `UNIQUE (users.email)`, email stored lowercase | `Alice@x.com` and `alice@x.com` are the same account; also stops two simultaneous registrations with the same email. The service lowercases before every insert and lookup. |
+| `UNIQUE (users.email)`, email stored lowercase | `Alice@x.com` and `alice@x.com` are the same account; also stops two simultaneous registrations with the same email. The service lowercases before every insert and lookup. `CHECK (email = lower(email))` enforces it in the database too. |
 | `payments.provider_txn_id UNIQUE` | Supports idempotent webhook handling. |
 | `UNIQUE (order_id) WHERE status = 'success'` on payments (partial unique index) | An order can never have two successful payments, even if two callbacks are processed at the same moment. |
 | `UNIQUE (order_id) WHERE status = 'pending'` on payments (partial unique index) | Two "Pay" clicks at the same moment cannot create two pending payments (two QR codes). The second insert fails; the service then returns the existing pending payment. |
@@ -235,6 +235,7 @@ This counts online orders once paid and COD orders once delivered (when their pa
 | Products use `is_active` instead of delete | Orders and reviews reference products; deleting would break history. |
 | `ON DELETE CASCADE` only for owned children (`addresses`, `cart_items`, `product_images`) | These rows have no meaning without their parent. |
 | `ON DELETE RESTRICT` (explicit) for `order_items.product_id`, `order_items.order_id`, `payments.order_id`, `reviews.product_id`, `reviews.user_id`, `orders.user_id`, `order_status_history.order_id` | Orders, order items, payments, and reviews must never be deleted by cascade; trying to delete a referenced row fails loudly. |
+| `ON DELETE RESTRICT` also for every other FK (`products.category_id`, `categories.parent_id`, `carts.user_id`, `cart_items.product_id`, `order_status_history.changed_by`, `orders.refund_handled_by`) | V1 never hard-deletes users, products, or categories (they are deactivated), so any delete of a referenced row is a bug. |
 
 ## 6. Indexes
 

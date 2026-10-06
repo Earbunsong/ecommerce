@@ -354,7 +354,7 @@ All endpoints are prefixed with `/api`. 🔒 = login required, 👑 = admin only
 
 | Environment | Web | API | Database | How same-site is achieved |
 |---|---|---|---|---|
-| Local | Vite dev server `:5173` | Node 22 `:3000` | Docker PostgreSQL 16 on host port `5433` (5432 is often taken by a native PostgreSQL install) | Vite `server.proxy` forwards `/api` to `:3000` |
+| Local | Vite dev server `:5173` | Node 22 `:3000` | Docker PostgreSQL 16 on host port `5434` (5432/5433 are often taken by native PostgreSQL installs) | Vite `server.proxy` forwards `/api` to `:3000` |
 | Production (simple) | Vercel / Cloudflare Pages / Netlify | Render / Railway / Fly.io | Neon / Supabase / Railway PostgreSQL | Host rewrite `/api/*` → API URL (e.g. Vercel `rewrites`), or custom subdomains |
 | Production (AWS) | S3 + CloudFront | ECS Fargate (Docker) behind an ALB | RDS PostgreSQL | CloudFront behavior `/api/*` → ALB origin |
 

@@ -41,22 +41,22 @@ The phases fit the 8 development weeks of the proposal timeline (§10, weeks 5�
 **Done when:** `pnpm dev` starts both apps; the web page shows the API health response fetched through `hc<AppType>` (renaming a field in the API response causes a web type error); CI is green.
 
 ## Phase 1 — Database and test infrastructure (week 5)
-- [ ] Drizzle schema matching `docs/04-erd.md` exactly (tables, enums, CHECK constraints, partial unique indexes, FK indexes, explicit `ON DELETE`)
-- [ ] `order_number_seq` sequence (ERD §4.2)
-- [ ] Migrations generated and applied
-- [ ] Env config validated with Zod (`config/env.ts`)
-- [ ] **Test infrastructure**
-  - [ ] Tests run against `shopkh_test`; `pnpm test` applies migrations to it first
-  - [ ] All tables are emptied (`TRUNCATE ... CASCADE`) before each test file
-  - [ ] Test helpers: `createUser`, `createAdmin`, `createCategory`, `createProduct`, `createOrder`, `loginAs` (returns a cookie)
-  - [ ] Concurrency helper: runs N requests at the same time with `Promise.all`, each through the real API and the connection pool (**not** inside one shared transaction, which would hide race conditions)
-- [ ] **Demo seed** (`db:seed`, development only; refuses to run when `NODE_ENV=production`):
-  - [ ] 1 admin and 2 customers with documented demo passwords
-  - [ ] 5 categories, including at least 1 sub-category and 1 inactive category
-  - [ ] 30 products with placeholder images stored in the repo, including 1 inactive, 1 out of stock, and 2 low-stock (≤ 5) products
-  - [ ] 1 delivered order (so a review can be written), 1 cancelled paid order with `needs_refund = true`
-- [ ] **Production admin** (`db:create-admin`): creates one admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars; fails if the email exists
-- [ ] Tests: constraints reject bad rows (negative stock, wrong line total, wrong order total, second default address, second primary image, second pending payment, second successful payment, cancelled order without reason, online order without `expires_at`)
+- [x] Drizzle schema matching `docs/04-erd.md` exactly (tables, enums, CHECK constraints, partial unique indexes, FK indexes, explicit `ON DELETE`)
+- [x] `order_number_seq` sequence (ERD §4.2)
+- [x] Migrations generated and applied
+- [x] Env config validated with Zod (`config/env.ts`)
+- [x] **Test infrastructure**
+  - [x] Tests run against `shopkh_test`; `pnpm test` applies migrations to it first
+  - [x] All tables are emptied (`TRUNCATE ... CASCADE`) before each test file
+  - [x] Test helpers: `createUser`, `createAdmin`, `createCategory`, `createProduct`, `createOrder`, `loginAs` (returns a cookie; placeholder until Phase 2 adds `/auth/login`)
+  - [x] Concurrency helper: runs N requests at the same time with `Promise.all`, each through the real API and the connection pool (**not** inside one shared transaction, which would hide race conditions)
+- [x] **Demo seed** (`db:seed`, development only; refuses to run when `NODE_ENV=production`):
+  - [x] 1 admin and 2 customers with documented demo passwords
+  - [x] 5 categories, including at least 1 sub-category and 1 inactive category
+  - [x] 30 products with placeholder images stored in the repo, including 1 inactive, 1 out of stock, and 2 low-stock (≤ 5) products
+  - [x] 1 delivered order (so a review can be written), 1 cancelled paid order with `needs_refund = true`
+- [x] **Production admin** (`db:create-admin`): creates one admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars; fails if the email exists
+- [x] Tests: constraints reject bad rows (negative stock, wrong line total, wrong order total, second default address, second primary image, second pending payment, second successful payment, cancelled order without reason, online order without `expires_at`)
 
 **Done when:** `pnpm db:migrate && pnpm db:seed` works on an empty database; the constraint tests pass; `db:seed` refuses to run with `NODE_ENV=production`.
 

@@ -10,19 +10,25 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:generate": "node -e \"console.log('db:generate: added in Phase 1')\"",
-    "db:migrate": "node -e \"console.log('db:migrate: added in Phase 1')\"",
-    "db:seed": "node -e \"console.log('db:seed: added in Phase 1')\"",
-    "db:create-admin": "node -e \"console.log('db:create-admin: added in Phase 1')\""
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:create-admin": "tsx src/db/create-admin.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:seed-images": "tsx src/db/generate-seed-images.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.3",
     "@hono/zod-validator": "^0.9.1",
+    "@node-rs/argon2": "^2.2.2",
+    "drizzle-orm": "^0.45.3",
     "hono": "^4.13.13",
+    "postgres": "^3.4.9",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "drizzle-kit": "^0.31.11",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3"
