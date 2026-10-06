@@ -61,12 +61,12 @@ The phases fit the 8 development weeks of the proposal timeline (§10, weeks 5�
 **Done when:** `pnpm db:migrate && pnpm db:seed` works on an empty database; the constraint tests pass; `db:seed` refuses to run with `NODE_ENV=production`.
 
 ## Phase 2 — Backend foundation + Auth (week 6)
-- [ ] `AppError(code, message)` + global error handler with the code → HTTP status table (architecture §4.10)
-- [ ] Secure headers middleware (`hono/secure-headers`)
-- [ ] Auth module: register (creates cart, sets cookie), login (password checked before `is_active`), logout, me; emails lowercased
-- [ ] `authMiddleware` (loads user from DB every request, rejects inactive), `requireAdmin`
-- [ ] Rate limiting on login/register
-- [ ] Tests: register logs in, duplicate email (incl. different case), wrong password, inactive user gets `ACCOUNT_DISABLED` only with correct password, user deactivated while logged in is rejected, admin guard, rate limit returns 429, `password_hash` never in any response
+- [x] `AppError(code, message)` + global error handler with the code → HTTP status table (architecture §4.10)
+- [x] Secure headers middleware (`hono/secure-headers`)
+- [x] Auth module: register (creates cart, sets cookie), login (password checked before `is_active`), logout, me; emails lowercased
+- [x] `authMiddleware` (loads user from DB every request, rejects inactive), `requireAdmin`
+- [x] Rate limiting on login/register
+- [x] Tests: register logs in, duplicate email (incl. different case), wrong password, inactive user gets `ACCOUNT_DISABLED` only with correct password, user deactivated while logged in is rejected, admin guard, rate limit returns 429, `password_hash` never in any response
 
 **Done when:** all auth tests pass; every error response has the §4.10 shape.
 

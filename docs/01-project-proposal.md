@@ -81,7 +81,7 @@ This project proposes a web-based e-commerce application where a single store ca
 
 | ID | Requirement |
 |---|---|
-| FR-01 | The system shall allow a guest to register with full name, email, phone, and password, and log them in immediately. Emails are case-insensitive. |
+| FR-01 | The system shall allow a guest to register with full name, email, phone, and password, and log them in immediately. Emails are case-insensitive. Passwords are 8–128 characters. Phone numbers must be Cambodian (`0XX…` or `+855…`) and are stored in the local `0XX…` form. |
 | FR-02 | The system shall allow users to log in and log out. |
 | FR-03 | The system shall allow customers to view and update their profile. |
 | FR-04 | The system shall allow customers to add, edit, delete, and set a default delivery address. |
@@ -126,7 +126,7 @@ This project proposes a web-based e-commerce application where a single store ca
 | NFR-07 | Usability | The website is responsive on mobile, tablet, and desktop. |
 | NFR-08 | Reliability | Payment callbacks are idempotent: receiving the same callback twice does not pay an order twice. |
 | NFR-09 | Maintainability | Code follows a layered structure (routes → services → repositories) with TypeScript end-to-end. |
-| NFR-10 | Security | Login and registration are rate-limited per IP address to slow down password guessing. |
+| NFR-10 | Security | Login and registration are rate-limited per IP address to slow down password guessing: 10 attempts per 15 minutes, counted separately for login and registration. |
 
 ## 8. Technology Stack and Justification
 

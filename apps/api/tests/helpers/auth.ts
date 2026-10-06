@@ -1,7 +1,19 @@
+import { resetRateLimits } from '../../src/middleware/rate-limit.js'
+import { TEST_PASSWORD } from './factories.js'
+import { authCookieFrom, request } from './http.js'
+
 /**
- * Logs in through POST /api/auth/login and returns the auth cookie for later requests.
- * The login endpoint is built in Phase 2; this is a placeholder until then.
+ * Logs in through POST /api/auth/login and returns the auth cookie to send with later requests:
+ *   const cookie = await loginAs(user.email)
+ *   await request('/auth/me', { cookie })
  */
-export async function loginAs(_email: string, _password?: string): Promise<string> {
-  throw new Error('loginAs is implemented in Phase 2 (requires POST /api/auth/login).')
+export async function loginAs(email: string, password = TEST_PASSWORD): Promise<string> {
+  // Tests log in many times from the same "IP"; the rate limiter is tested on its own
+  resetRateLimits()
+  const { res, status, body } = await request('/auth/login', { json: { email, password } })
+  const cookie = authCookieFrom(res)
+  if (status !== 200 || !cookie) {
+    throw new Error(`loginAs(${email}) failed: ${status} ${JSON.stringify(body)}`)
+  }
+  return cookie
 }

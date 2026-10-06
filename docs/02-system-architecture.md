@@ -375,6 +375,7 @@ Environment variables (API):
 | `ORDER_PAYMENT_TIMEOUT_MINUTES` | Unpaid online order lifetime (default 15) |
 | `ENABLE_MOCK_PAYMENTS` | `true` registers the mock payment route (default `false`) |
 | `STORAGE_DRIVER` | `local` / `s3` / `cloudinary` |
+| `TRUST_PROXY` | `true` only behind a reverse proxy that sets `X-Forwarded-For`; the rate limiter then uses that header for the client IP (default `false`) |
 | `STORAGE_*` | Driver credentials, e.g. `S3_BUCKET`, `S3_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, or `CLOUDINARY_URL` |
 | Payment gateway keys | e.g. `ABA_PAYWAY_MERCHANT_ID`, `ABA_PAYWAY_API_KEY`, `BAKONG_TOKEN` |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Used **only** by `db:create-admin` to create the production admin; set them for that run, then remove them |

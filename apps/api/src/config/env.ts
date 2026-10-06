@@ -27,6 +27,8 @@ const schema = z
     ORDER_PAYMENT_TIMEOUT_MINUTES: z.coerce.number().int().positive().default(15),
     ENABLE_MOCK_PAYMENTS: bool,
     STORAGE_DRIVER: z.enum(['local', 's3', 'cloudinary']).default('local'),
+    // true only behind a reverse proxy that sets X-Forwarded-For (used for rate limiting by IP)
+    TRUST_PROXY: bool,
   })
   .transform((env) => ({
     ...env,
