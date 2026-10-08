@@ -188,6 +188,7 @@ Services throw `AppError(code, message)` — **no HTTP status**, because service
 | `FORBIDDEN` | 403 | Not an admin, or not the owner |
 | `NOT_FOUND` | 404 | Resource does not exist (also used for other users' resources, to avoid leaking that they exist) |
 | `EMAIL_TAKEN` | 409 | Registration with an existing email |
+| `ALREADY_EXISTS` | 409 | Duplicate product SKU, product slug, or category slug |
 | `OUT_OF_STOCK` | 409 | Not enough stock when adding to cart or checking out |
 | `CART_EMPTY` | 409 | Checkout with an empty cart |
 | `INVALID_STATUS_TRANSITION` | 409 | Status change not allowed (flowchart 5), or the order changed in the meantime |
@@ -277,7 +278,7 @@ All endpoints are prefixed with `/api`. 🔒 = login required, 👑 = admin only
 | Method | Path | Description |
 |---|---|---|
 | GET | `/categories` | Active category tree (max 2 levels) |
-| GET | `/products` | Visible products (product active **and** its category, and that category's parent, active — ERD §4.1), with `search`, `category` (a parent category includes its sub-categories), `minPrice`, `maxPrice`, `sort`, `page`, `pageSize` |
+| GET | `/products` | Visible products (product active **and** its category, and that category's parent, active — ERD §4.1), with `search`, `category` (a parent category includes its sub-categories), `minPrice`, `maxPrice` (integer cents), `sort` (`newest` default, `price_asc`, `price_desc`, `rating`), `page`, `pageSize` |
 | GET | `/products/:slug` | Product detail with images and rating summary |
 | GET | `/products/:slug/reviews` | Product reviews (paginated) |
 
@@ -314,8 +315,9 @@ All endpoints are prefixed with `/api`. 🔒 = login required, 👑 = admin only
 ### Admin 👑
 | Method | Path | Description |
 |---|---|---|
-| GET / POST | `/admin/products` | List (incl. inactive) / create |
-| PATCH | `/admin/products/:id` | Update (incl. activate/deactivate) |
+| GET / POST | `/admin/products` | List (incl. inactive; `search` by name or SKU, `categoryId`, `isActive`) / create (slug generated from the name if not given) |
+| GET | `/admin/products/:id` | Detail with all images (for the edit screen) |
+| PATCH | `/admin/products/:id` | Update (incl. activate/deactivate). `stockQuantity` is rejected: stock changes only through stock adjustments |
 | POST | `/admin/products/:id/stock-adjustments` | Adjust stock by a change amount `{ delta, reason }` (e.g. `+20` restock, `-1` damaged). V1 writes `reason` to the application log; it is not stored in the database. |
 | POST | `/admin/products/:id/images` | Upload image |
 | PATCH | `/admin/products/:id/images/:imageId` | Change `sortOrder`, `altText`, or set `isPrimary` (clears the old primary in the same transaction) |
@@ -341,7 +343,7 @@ All endpoints are prefixed with `/api`. 🔒 = login required, 👑 = admin only
 - Secure response headers with `hono/secure-headers`.
 - CORS allows only the web app origin, with `credentials: true` (not applied to the webhook route).
 - Verify payment webhook signatures.
-- Uploaded files: allow only image MIME types, limit size (e.g. 5 MB), generate random file names.
+- Uploaded files: only JPEG, PNG, or WebP, detected from the file contents (the browser-supplied type and name are ignored; SVG is rejected because it can contain scripts); max 5 MB; random file names. Files under `/uploads` are served with `X-Content-Type-Options: nosniff` and a restrictive CSP.
 - Mock payment route disabled unless `ENABLE_MOCK_PAYMENTS=true`.
 - Never return `password_hash` in any response.
 
@@ -374,7 +376,8 @@ Environment variables (API):
 | `FREE_SHIPPING_THRESHOLD_CENTS` | Subtotal at which shipping is free |
 | `ORDER_PAYMENT_TIMEOUT_MINUTES` | Unpaid online order lifetime (default 15) |
 | `ENABLE_MOCK_PAYMENTS` | `true` registers the mock payment route (default `false`) |
-| `STORAGE_DRIVER` | `local` / `s3` / `cloudinary` |
+| `STORAGE_DRIVER` | `local` / `s3` / `cloudinary` (only `local` is implemented in V1 development) |
+| `UPLOAD_DIR` | Local driver folder (default `uploads`, relative to `apps/api`); the API serves it at `/uploads/*`, and Vite proxies `/uploads` in development |
 | `TRUST_PROXY` | `true` only behind a reverse proxy that sets `X-Forwarded-For`; the rate limiter then uses that header for the client IP (default `false`) |
 | `STORAGE_*` | Driver credentials, e.g. `S3_BUCKET`, `S3_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, or `CLOUDINARY_URL` |
 | Payment gateway keys | e.g. `ABA_PAYWAY_MERCHANT_ID`, `ABA_PAYWAY_API_KEY`, `BAKONG_TOKEN` |

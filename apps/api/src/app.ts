@@ -4,6 +4,8 @@ import { secureHeaders } from 'hono/secure-headers'
 import { env } from './config/env.js'
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js'
 import { authRoutes } from './modules/auth/auth.routes.js'
+import { adminCategoryRoutes, categoryRoutes } from './modules/categories/categories.routes.js'
+import { adminProductRoutes, productRoutes } from './modules/products/products.routes.js'
 
 const app = new Hono().basePath('/api')
 
@@ -16,6 +18,10 @@ app.notFound(notFoundHandler)
 const routes = app
   .get('/health', (c) => c.json({ status: 'ok' as const, time: new Date().toISOString() }))
   .route('/auth', authRoutes)
+  .route('/categories', categoryRoutes)
+  .route('/products', productRoutes)
+  .route('/admin/categories', adminCategoryRoutes)
+  .route('/admin/products', adminProductRoutes)
 
 export type AppType = typeof routes
 export default routes

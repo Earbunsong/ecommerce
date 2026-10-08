@@ -13,6 +13,7 @@ export default defineConfig({
     // Same origin for web and API in development, so the sameSite=lax auth cookie is sent (architecture §8)
     proxy: {
       '/api': 'http://localhost:3000',
+      '/uploads': 'http://localhost:3000',
     },
   },
   test: {

@@ -71,16 +71,16 @@ The phases fit the 8 development weeks of the proposal timeline (§10, weeks 5�
 **Done when:** all auth tests pass; every error response has the §4.10 shape.
 
 ## Phase 3 — Catalog + Admin products (week 6)
-- [ ] Public: category tree, product list (search/filter/sort/pagination; parent category includes sub-categories; hidden if category inactive), product detail
-- [ ] Admin: product CRUD, stock adjustments by `delta` (atomic, never negative), categories CRUD (max 2 levels)
-- [ ] Image upload with storage interface (local driver first); reorder, set primary, delete
-- [ ] Tests:
-  - [ ] filters, sort, pagination shape `{ items, page, pageSize, total }`
-  - [ ] inactive product hidden; product hidden when its category or parent category is inactive; parent category filter includes sub-category products
-  - [ ] non-admin rejected from admin routes
-  - [ ] stock adjustment cannot go negative
-  - [ ] upload rejects non-image files and files over 5 MB; first image becomes primary; deleting the primary promotes the next image
-  - [ ] category cannot be its own parent; third level rejected
+- [x] Public: category tree, product list (search/filter/sort/pagination; parent category includes sub-categories; hidden if category inactive), product detail
+- [x] Admin: product CRUD, stock adjustments by `delta` (atomic, never negative), categories CRUD (max 2 levels)
+- [x] Image upload with storage interface (local driver first); reorder, set primary, delete
+- [x] Tests:
+  - [x] filters, sort, pagination shape `{ items, page, pageSize, total }`
+  - [x] inactive product hidden; product hidden when its category or parent category is inactive; parent category filter includes sub-category products
+  - [x] non-admin rejected from admin routes
+  - [x] stock adjustment cannot go negative
+  - [x] upload rejects non-image files and files over 5 MB; first image becomes primary; deleting the primary promotes the next image
+  - [x] category cannot be its own parent; third level rejected
 
 **Done when:** all catalog tests pass; the seeded products can be browsed and filtered through the API.
 
