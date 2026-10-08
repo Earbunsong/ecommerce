@@ -11,3 +11,16 @@ uploads/
 !.vscode/extensions.json
 test-results/
 playwright-report/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# TypeScript / tool caches
+*.tsbuildinfo
+.eslintcache
+
+# Local temp files
+*.local
+tmp/
